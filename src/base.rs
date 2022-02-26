@@ -129,6 +129,12 @@ pub fn compile_codegen_unit<'tcx>(tcx: TyCtxt<'tcx>, cgu_name: Symbol, supports_
                 mono_item.define::<Builder<'_, '_, '_>>(&cx);
             }
 
+            if env::var("CG_GCCJIT_DUMP_GIMPLE").as_deref() == Ok("1") {
+                eprintln!("dumping {}", cgu_name);
+                cx.context.dump_to_file(format!("/tmp/{}.gimple", cgu_name), false);
+                eprintln!("done dumping {}", cgu_name);
+            }
+
             // If this codegen unit contains the main function, also create the
             // wrapper here
             maybe_create_entry_wrapper::<Builder<'_, '_, '_>>(&cx);
